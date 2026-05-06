@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>RoadSOS AI</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Government Emergency Assistance Prototype</p>
+        <h1>RoadSOS AI</h1>
+      </div>
+      <span id="networkBadge" class="badge">Online</span>
+    </header>
+
+    <main class="shell">
+      <section class="hotline-panel" aria-label="Emergency helpline numbers">
+        <div class="hotline-card primary">
+          <span class="hotline-label">Ambulance</span>
+          <strong>108</strong>
+        </div>
+        <div class="hotline-card">
+          <span class="hotline-label">National SOS</span>
+          <strong>112</strong>
+        </div>
+        <div class="hotline-card">
+          <span class="hotline-label">Police</span>
+          <strong>100</strong>
+        </div>
+        <div class="hotline-card">
+          <span class="hotline-label">Fire</span>
+          <strong>101</strong>
+        </div>
+        <div class="hotline-card">
+          <span class="hotline-label">Highway</span>
+          <strong>1033</strong>
+        </div>
+      </section>
+
+      <section class="emergency-panel">
+        <div class="status-card">
+          <span class="status-dot"></span>
+          <div>
+            <span>Emergency system</span>
+            <strong>Ready for SOS dispatch</strong>
+          </div>
+        </div>
+        <button id="sosButton" class="sos-button" type="button">
+          <span>SOS</span>
+          <small>Send location alert</small>
+        </button>
+        <div id="locationText" class="location-card">
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M12 22s7-6.3 7-13A7 7 0 0 0 5 9c0 6.7 7 13 7 13Z"></path>
+            <circle cx="12" cy="9" r="2.4"></circle>
+          </svg>
+          <div>
+            <span>Current location</span>
+            <strong id="locationValue">Demo mode near IIT Madras</strong>
+            <div class="location-actions">
+              <button id="gpsButton" type="button">Use device GPS</button>
+              <button id="manualLocationToggle" type="button">Set manually</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <form id="manualLocationForm" class="manual-location-panel" hidden>
+        <label>
+          Latitude
+          <input id="manualLat" type="number" step="0.000001" min="-90" max="90" value="13.0067">
+        </label>
+        <label>
+          Longitude
+          <input id="manualLng" type="number" step="0.000001" min="-180" max="180" value="80.2206">
+        </label>
+        <button type="submit">Apply location</button>
+      </form>
+
+      <section class="grid">
+        <div class="main-column">
+          <article class="chat-panel">
+            <div class="section-heading">
+              <div class="heading-with-icon">
+                <span class="panel-icon">AI</span>
+                <h2>AI Emergency Assistant</h2>
+              </div>
+              <div class="assistant-actions">
+                <span id="backendStatus" class="backend-status">Backend checking</span>
+                <button id="clearChat" type="button">Clear</button>
+              </div>
+            </div>
+            <div id="chatLog" class="chat-log" aria-live="polite"></div>
+            <form id="chatForm" class="chat-form">
+              <input id="chatInput" type="text" autocomplete="off" placeholder="Type: road accident near me">
+              <button type="submit">Send</button>
+            </form>
+            <div class="quick-actions">
+              <button data-prompt="Need ambulance near me" type="button">Ambulance</button>
+              <button data-prompt="Nearest trauma center" type="button">Trauma center</button>
+              <button data-prompt="What to do during accident?" type="button">First aid</button>
+            </div>
+          </article>
+
+          <article class="map-panel">
+            <div class="section-heading">
+              <div class="heading-with-icon">
+                <span class="panel-icon">RT</span>
+                <h2>Route View</h2>
+              </div>
+              <span>No billing map</span>
+            </div>
+            <div class="map">
+              <iframe
+                id="osmMap"
+                class="osm-map"
+                title="OpenStreetMap emergency map"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade">
+              </iframe>
+              <span class="pin user-pin">You</span>
+              <span class="pin hospital-pin">Hospital</span>
+              <span class="pin police-pin">Police</span>
+              <div class="route-line"></div>
+            </div>
+          </article>
+        </div>
+
+        <article class="services-panel">
+          <div class="section-heading">
+            <div class="heading-with-icon">
+              <span class="panel-icon">ER</span>
+              <h2>Nearby Services</h2>
+            </div>
+            <button id="refreshServices" type="button">Refresh</button>
+          </div>
+          <div id="serviceList" class="service-list"></div>
+        </article>
+
+        <article class="guidance-panel emergency-actions">
+          <div class="heading-with-icon">
+            <span class="panel-icon">EA</span>
+            <h2>Emergency Actions</h2>
+          </div>
+          <ul>
+            <li>Move away from traffic and turn on hazard lights.</li>
+            <li>Call 108 or 112 and share an exact landmark.</li>
+            <li>Check breathing and control bleeding with firm pressure.</li>
+            <li>Do not move injured people unless fire, traffic, or flooding creates immediate danger.</li>
+          </ul>
+        </article>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

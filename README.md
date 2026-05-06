@@ -1,19 +1,114 @@
 # RoadSOS AI
 
-AI-powered road safety and emergency assistance MVP for the IIT Madras Road Safety Hackathon 2026.
+RoadSOS AI is an AI-powered road safety and emergency assistance web application built for the IIT Madras Road Safety Hackathon 2026.
 
-## What Is Included
+Live demo: https://roadsos-ai.onrender.com/
 
-- Mobile-first emergency dashboard
-- Offline-capable AI assistant fallback
-- Emergency intent and urgency detection
-- Nearby hospital, ambulance, and police service ranking
-- Smart fallback routing when ambulance availability is low
-- SOS logging API scaffold
-- First-aid and road-safety information
-- Billing-free OpenStreetMap route view
+## Overview
+
+RoadSOS AI helps users during road emergencies by combining an emergency assistant, SOS flow, nearby service discovery, first-aid guidance, GPS/manual location support, and no-billing map routing.
+
+When a user reports an accident, the system can:
+
+- Detect emergency intent and urgency
+- Suggest immediate safety actions
+- Show nearby ambulance, hospital, and police options
+- Generate an SOS dispatch response
+- Use device GPS or manual coordinates
+- Provide Google Maps and OpenStreetMap route links
+- Continue working with offline/browser fallback logic
+
+## Key Features
+
+- AI emergency assistant with backend intent detection
+- One-click SOS alert workflow
+- Device GPS location support
+- Manual latitude/longitude location entry
+- Nearby emergency services ranking
+- Ambulance, hospital, and police cards
+- No Google Cloud billing required for maps
+- OpenStreetMap embedded route view
+- Google Maps direction links without API billing
+- Offline emergency guidance fallback
+- FastAPI backend with clean API endpoints
+- Optional Gemini API integration
+
+## Live Demo
+
+Open:
+
+```text
+https://roadsos-ai.onrender.com/
+```
+
+Suggested demo flow:
+
+1. Open the app.
+2. Click `Use device GPS` or set location manually.
+3. Type `Road accident near me`.
+4. The assistant classifies the request as an emergency.
+5. Nearby emergency services are shown.
+6. Click `SOS`.
+7. Open a route link from a service card.
+
+## Tech Stack
+
+Frontend:
+
+- HTML
+- CSS
+- JavaScript
+- OpenStreetMap embed
+
+Backend:
+
+- Python
+- FastAPI
+- Pydantic
+- Uvicorn
+
+AI / Logic:
+
+- Rule-based emergency intent detection
+- Smart emergency routing logic
+- Optional Gemini API response generation
+
+Deployment:
+
+- Render
+- Docker-ready configuration
+
+## Project Structure
+
+```text
+RoadSOS-AI/
+├── ai_logic/
+│   ├── gemini.py
+│   ├── intent.py
+│   └── routing.py
+├── backend/
+│   ├── api.py
+│   ├── models.py
+│   └── sample_data.py
+├── database/
+│   └── schema.sql
+├── docs/
+│   └── team-division.md
+├── frontend/
+│   ├── app.js
+│   ├── index.html
+│   ├── styles.css
+│   └── sw.js
+├── app.py
+├── Dockerfile
+├── Procfile
+├── render.yaml
+└── requirements.txt
+```
 
 ## Run Locally
+
+Clone the repository and run:
 
 ```bash
 pip install -r requirements.txt
@@ -28,40 +123,90 @@ http://127.0.0.1:8000/
 
 Device GPS works best from `http://127.0.0.1:8000/` because browsers may restrict location permission on `file://` pages.
 
-## Optional AI Key
+## API Endpoints
 
-The backend works without external keys using the RoadSOS rules engine. For Gemini-powered responses, set:
+Health check:
 
-```bash
-set GEMINI_API_KEY=YOUR_KEY
-set GEMINI_MODEL=gemini-2.0-flash
+```http
+GET /health
 ```
+
+Chat assistant:
+
+```http
+POST /chat
+```
+
+Example body:
+
+```json
+{
+  "message": "Road accident near me need ambulance",
+  "location": {
+    "lat": 13.0067,
+    "lng": 80.2206
+  }
+}
+```
+
+Create SOS:
+
+```http
+POST /sos
+```
+
+Example body:
+
+```json
+{
+  "name": "RoadSOS demo user",
+  "phone": "",
+  "message": "SOS from RoadSOS AI web app",
+  "location": {
+    "lat": 13.0067,
+    "lng": 80.2206
+  }
+}
+```
+
+Nearby services:
+
+```http
+GET /services/nearby?lat=13.0067&lng=80.2206
+```
+
+## Optional Gemini Setup
+
+The app works without a Gemini API key using its built-in RoadSOS rules engine.
+
+To enable Gemini-powered responses, set these environment variables:
+
+```text
+GEMINI_API_KEY=your_gemini_api_key_here
+GEMINI_MODEL=gemini-2.0-flash
+```
+
+On Render, add them under `Environment Variables`.
 
 ## Billing-Free Map Mode
 
-The web app uses OpenStreetMap embed for the route view and generates external direction links:
+This project intentionally avoids Google Cloud billing requirements.
 
+It uses:
+
+- OpenStreetMap embed for the map view
 - Google Maps route links through `https://www.google.com/maps/dir/?api=1`
 - OpenStreetMap route links through `https://www.openstreetmap.org/directions`
 
-This does not require a Google Cloud billing account. Live Google Places search is not included in this mode, so nearby emergency services come from the backend sample/cache list.
+This means no Google Maps Platform API key or billing account is required for the current map feature.
 
-## API Endpoints
+Note: live Google Places search is not included in this billing-free mode. Nearby emergency services currently come from backend sample/cache data.
 
-- `GET /health`
-- `POST /chat`
-- `POST /sos`
-- `GET /services/nearby?lat=13.0067&lng=80.2206&type=hospital`
+## Deployment
 
-## Permanent Deployment
+This project is deployed as one Render web service. FastAPI serves both the API and the frontend.
 
-The simplest deployment is one web service because FastAPI serves both the backend API and `frontend/`.
-
-### Render
-
-1. Push this `RoadSOS-AI` folder to GitHub.
-2. Create a new Render Web Service from the repo.
-3. Use these settings:
+Render settings:
 
 ```text
 Environment: Python
@@ -70,44 +215,39 @@ Start Command: uvicorn app:app --host 0.0.0.0 --port $PORT
 Health Check Path: /health
 ```
 
-4. Optional environment variables:
+Optional environment variables:
 
 ```text
-GEMINI_API_KEY=your_key_here
 GEMINI_MODEL=gemini-2.0-flash
+GEMINI_API_KEY=your_key_here
 ```
 
-After deploy, open the Render URL. The homepage, API, offline frontend, and no-billing map mode all run from the same domain.
+## Hackathon Requirements Covered
 
-### Docker
+| Requirement | Status |
+| --- | --- |
+| AI chatbot | Covered |
+| Road safety assistance | Covered |
+| Emergency SOS flow | Covered |
+| Nearby hospitals/services | Covered |
+| Ambulance routing fallback | Covered |
+| GPS/manual location | Covered |
+| Offline fallback guidance | Covered |
+| Python backend | Covered |
+| Maps/routing | Covered without billing |
 
-```bash
-docker build -t roadsos-ai .
-docker run -p 8000:8000 roadsos-ai
-```
+## Future Improvements
 
-## Project Structure
+- Real SMS/WhatsApp SOS alerts
+- Emergency contact management
+- Responder dashboard
+- Live ambulance tracking
+- Regional language support
+- Voice input
+- Severity questionnaire
+- SQLite persistence for SOS logs
+- Real hospital availability integration
 
-```text
-RoadSOS-AI/
-├── ai_logic/
-├── backend/
-├── database/
-├── docs/
-├── frontend/
-├── app.py
-├── Dockerfile
-├── Procfile
-├── render.yaml
-└── requirements.txt
-```
+## Disclaimer
 
-## Demo Script
-
-1. Open the app.
-2. Type `Road accident near me`.
-3. The assistant classifies it as critical.
-4. Nearby trauma centers and ambulance options appear.
-5. Press `SOS` to generate a mock emergency alert.
-6. Use device GPS or set manual coordinates.
-7. Open Google route or OSM route from a nearby service card.
+RoadSOS AI is a hackathon prototype. It is not a substitute for official emergency services. In a real emergency in India, call `108` or `112` immediately.
